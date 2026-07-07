@@ -1,295 +1,362 @@
 package br.com.escolarium.view;
 
 import br.com.escolarium.controller.AlunoController;
-import br.com.escolarium.model.Aluno;
-import br.com.escolarium.model.Endereco;
-import br.com.escolarium.model.Responsaveis;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.MaskFormatter;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.text.ParseException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
-public class MainUI {
+public class MainUI extends JFrame {
 
-    public static void main(String[] args) {
+    //=========================================
+    // CONTROLLER
+    //=========================================
+    private AlunoController controller;
 
-        // Visual moderno do sistema operacional
+    //=========================================
+    // CAMPOS SUPERIORES (Aluno e Responsável)
+    //=========================================
+    private JTextField txtMatricula;
+    private JTextField txtSala;
+    private JTextField txtTurma;
+    private JTextField txtAluno;
+    private JTextField txtIdentidade;
+    private JTextField txtCpf;
+    
+    private JTextField txtRespNome;
+    private JTextField txtRespIdentidade;
+    private JTextField txtRespCpf;
+    private JCheckBox chkMesmoEndereco;
+
+    //=========================================
+    // DADOS DO ALUNO (Aba 1)
+    //=========================================
+    private JTextField txtEndereco;
+    private JTextField txtComplemento;
+    private JTextField txtBairro;
+    private JTextField txtCidade;
+    private JTextField txtUF;
+    private JTextField txtCEP;
+    private JTextField txtNaturalidade;
+    private JTextField txtNascimento;
+    private JTextField txtTelefoneResidencial;
+    private JTextField txtTelefoneComercial;
+    private JTextField txtCelular;
+
+    //=========================================
+    // RESPONSÁVEIS (Aba 2)
+    //=========================================
+    private JTextField txtNomeMae;
+    private JTextField txtNomePai;
+    private JTextField txtCpfMae;
+    private JTextField txtCpfPai;
+    private JTextField txtTelefoneMae;
+    private JTextField txtTelefonePai;
+    private JTextField txtEmailMae;
+    private JTextField txtEmailPai;
+    private JTextField txtProfissaoMae;
+    private JTextField txtProfissaoPai;
+
+    //=========================================
+    // TABELAS
+    //=========================================
+    private JTable tabelaHorarios;
+    private JTable tabelaMensalidades;
+
+    //=========================================
+    // BOTÕES DE AÇÃO (Rodapé)
+    //=========================================
+    private JButton btnNovo;
+    private JButton btnExcluir;
+    private JButton btnSalvar;
+    private JButton btnIrPara;
+    private JButton btnMensalidade;
+    private JButton btnFrequencia;
+    private JButton btnHistorico;
+    
+    // NAVEGAÇÃO
+    private JButton btnPrimeiro, btnAnterior, btnProximo, btnUltimo;
+
+    //=========================================
+    // COMPONENTES
+    //=========================================
+    private JTabbedPane abas;
+
+    //=========================================
+    // CONSTRUTOR
+    //=========================================
+    public MainUI() {
+        // controller = new AlunoController(); // Descomente quando a classe existir
+        configurarJanela();
+        setVisible(true);
+    }
+
+    //=========================================
+    // CONFIGURAÇÃO DA JANELA
+    //=========================================
+    private void configurarJanela() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        AlunoController controller = new AlunoController();
+        setTitle("Cadastro de Alunos");
+        setSize(1100, 750); // Tamanho ajustado para caber o layout da foto
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLayout(new BorderLayout(5, 5));
 
-        JFrame frame = new JFrame("Escolarium - Gestão Acadêmica Completa");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(700, 600);
-        frame.setLocationRelativeTo(null);
-        frame.setLayout(new BorderLayout(10, 10));
+        JPanel painelPrincipal = new JPanel(new BorderLayout(5, 5));
+        painelPrincipal.setBorder(new EmptyBorder(5, 5, 5, 5));
+        add(painelPrincipal, BorderLayout.CENTER);
 
-        JTabbedPane painelDeAbas = new JTabbedPane();
-        painelDeAbas.setBorder(new EmptyBorder(10, 10, 0, 10));
+        painelPrincipal.add(criarPainelSuperior(), BorderLayout.NORTH);
+        painelPrincipal.add(criarPainelCentral(), BorderLayout.CENTER);
+        painelPrincipal.add(criarPainelInferior(), BorderLayout.SOUTH);
+    }
 
-        // ==========================================
-        // ABA 1: DADOS DO ALUNO
-        // ==========================================
-        JPanel painelAluno = new JPanel(new GridLayout(0, 2, 10, 15));
-        painelAluno.setBorder(new EmptyBorder(20, 20, 20, 20));
+    //=========================================
+    // 1. PAINEL SUPERIOR (Dividido Lado a Lado)
+    //=========================================
+    private JPanel criarPainelSuperior() {
+        JPanel painel = new JPanel(new GridLayout(1, 2, 10, 0));
 
-        painelAluno.add(new JLabel("Nome Completo:"));
-        JTextField txtNomeAluno = new JTextField();
-        painelAluno.add(txtNomeAluno);
+        // ESQUERDA: DADOS BÁSICOS DO ALUNO
+        JPanel pnlAluno = new JPanel(new GridBagLayout());
+        pnlAluno.setBorder(new TitledBorder("Aluno"));
 
-        painelAluno.add(new JLabel("Idade:"));
-        // Truque para o campo não ficar esticado:
-        JPanel panelIdade = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        JTextField txtIdade = new JTextField(5); // Tamanho reduzido
-        panelIdade.add(txtIdade);
-        painelAluno.add(panelIdade);
+        adicionarComGrid(pnlAluno, new JLabel("Matrícula:"), 0, 0, 1, false);
+        txtMatricula = new JTextField(5); adicionarComGrid(pnlAluno, txtMatricula, 1, 0, 1, true);
+        adicionarComGrid(pnlAluno, new JLabel("Sala:"), 2, 0, 1, false);
+        txtSala = new JTextField(5); adicionarComGrid(pnlAluno, txtSala, 3, 0, 1, true);
+        adicionarComGrid(pnlAluno, new JLabel("Turmas:"), 4, 0, 1, false);
+        txtTurma = new JTextField(8); adicionarComGrid(pnlAluno, txtTurma, 5, 0, 1, true);
 
-        painelAluno.add(new JLabel("CPF:"));
-        JPanel panelCpf = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        JTextField txtCpfAluno = new JTextField(15);
-        panelCpf.add(txtCpfAluno);
-        painelAluno.add(panelCpf);
+        adicionarComGrid(pnlAluno, new JLabel("Aluno:"), 0, 1, 1, false);
+        txtAluno = new JTextField(); adicionarComGrid(pnlAluno, txtAluno, 1, 1, 5, true);
 
-        painelAluno.add(new JLabel("Matrícula:"));
-        JTextField txtMatricula = new JTextField();
-        painelAluno.add(txtMatricula);
+        adicionarComGrid(pnlAluno, new JLabel("Identidade:"), 0, 2, 1, false);
+        txtIdentidade = new JTextField(); adicionarComGrid(pnlAluno, txtIdentidade, 1, 2, 2, true);
+        adicionarComGrid(pnlAluno, new JLabel("CPF:"), 3, 2, 1, false);
+        txtCpf = new JTextField(); adicionarComGrid(pnlAluno, txtCpf, 4, 2, 2, true);
 
-        painelAluno.add(new JLabel("Data Nasc. (Apenas números):"));
-        JPanel panelData = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        JFormattedTextField txtDataNascAluno = null;
-        try {
-            MaskFormatter mascaraData = new MaskFormatter("##/##/####");
-            mascaraData.setPlaceholderCharacter('_');
-            txtDataNascAluno = new JFormattedTextField(mascaraData);
-            txtDataNascAluno.setColumns(10);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        // DIREITA: RESPONSÁVEL FINANCEIRO
+        JPanel pnlResp = new JPanel(new GridBagLayout());
+        pnlResp.setBorder(new TitledBorder("Responsável Financeiro"));
+
+        adicionarComGrid(pnlResp, new JCheckBox("Considerar os mesmos dados do aluno?"), 0, 0, 4, false);
+        
+        adicionarComGrid(pnlResp, new JLabel("Responsável:"), 0, 1, 1, false);
+        txtRespNome = new JTextField(); adicionarComGrid(pnlResp, txtRespNome, 1, 1, 3, true);
+        
+        adicionarComGrid(pnlResp, new JLabel("Identidade:"), 0, 2, 1, false);
+        txtRespIdentidade = new JTextField(); adicionarComGrid(pnlResp, txtRespIdentidade, 1, 2, 1, true);
+        adicionarComGrid(pnlResp, new JLabel("CPF:"), 2, 2, 1, false);
+        txtRespCpf = new JTextField(); adicionarComGrid(pnlResp, txtRespCpf, 3, 2, 1, true);
+
+        painel.add(pnlAluno);
+        painel.add(pnlResp);
+
+        return painel;
+    }
+
+    // O método auxiliar que garante que não ocorra o erro de duplicidade
+    private void adicionarComGrid(JPanel pnl, Component comp, int x, int y, int width, boolean estica) {
+        GridBagConstraints gbc = new GridBagConstraints(); // SEMPRE CRIA UM NOVO
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+        if (estica) {
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.weightx = 1.0;
         }
-        panelData.add(txtDataNascAluno);
-        painelAluno.add(panelData);
+        gbc.gridx = x;
+        gbc.gridy = y;
+        gbc.gridwidth = width;
+        pnl.add(comp, gbc);
+    }
+    //=========================================
+    // 2. PAINEL CENTRAL (ABAS)
+    //=========================================
+    private JPanel criarPainelCentral() {
+        JPanel painel = new JPanel(new BorderLayout());
+        painel.setBorder(new EmptyBorder(10, 0, 10, 0));
 
-        painelAluno.add(new JLabel("Série:"));
-        String[] opcoesSerie = {
-                "Selecione a Série...",
-                "1º Ano - Ensino Fundamental I", "2º Ano - Ensino Fundamental I", "3º Ano - Ensino Fundamental I",
-                "4º Ano - Ensino Fundamental I", "5º Ano - Ensino Fundamental I",
-                "6º Ano - Ensino Fundamental II", "7º Ano - Ensino Fundamental II", "8º Ano - Ensino Fundamental II",
-                "9º Ano - Ensino Fundamental II",
-                "1º Ano - Ensino Médio", "2º Ano - Ensino Médio", "3º Ano - Ensino Médio"
-        };
-        JComboBox<String> comboSerie = new JComboBox<>(opcoesSerie);
-        painelAluno.add(comboSerie);
+        abas = new JTabbedPane();
+        abas.setFont(new Font("Segoe UI", Font.BOLD, 12));
 
-        painelAluno.add(new JLabel("Turma:"));
-        JPanel panelTurma = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        JTextField txtTurma = new JTextField(5);
-        panelTurma.add(txtTurma);
-        painelAluno.add(panelTurma);
+        abas.addTab("Dados do Aluno", criarAbaDadosAluno());
+        abas.addTab("Dados do Responsável", criarAbaResponsavel());
+        abas.addTab("Cursos Contratados", criarAbaCursos());
+        abas.addTab("Outras Informações", criarAbaOutrasInformacoes());
 
-        painelDeAbas.addTab("Dados do Aluno", new JScrollPane(painelAluno));
+        painel.add(abas, BorderLayout.CENTER);
+        return painel;
+    }
 
-        // ==========================================
-        // ABA 2: ENDEREÇO
-        // ==========================================
-        JPanel painelEndereco = new JPanel(new GridLayout(0, 2, 10, 15));
-        painelEndereco.setBorder(new EmptyBorder(20, 20, 20, 20));
+ // ABA 1: DADOS DO ALUNO COM O MÉTODO AUXILIAR
+    private JPanel criarAbaDadosAluno() {
+        JPanel painel = new JPanel(new BorderLayout());
+        JPanel pnlCampos = new JPanel(new GridBagLayout());
+        pnlCampos.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        painelEndereco.add(new JLabel("Logradouro (Rua/Av/Tv):"));
-        JTextField txtLogradouro = new JTextField();
-        painelEndereco.add(txtLogradouro);
+        adicionarComGrid(pnlCampos, new JLabel("Endereço:"), 0, 0, 1, false);
+        txtEndereco = new JTextField(); adicionarComGrid(pnlCampos, txtEndereco, 1, 0, 3, true);
+        adicionarComGrid(pnlCampos, new JLabel("Complemento:"), 4, 0, 1, false);
+        txtComplemento = new JTextField(10); adicionarComGrid(pnlCampos, txtComplemento, 5, 0, 1, true);
 
-        painelEndereco.add(new JLabel("Nome da Rua:"));
-        JTextField txtRua = new JTextField();
-        painelEndereco.add(txtRua);
+        adicionarComGrid(pnlCampos, new JLabel("Bairro:"), 0, 1, 1, false);
+        txtBairro = new JTextField(); adicionarComGrid(pnlCampos, txtBairro, 1, 1, 3, true);
+        adicionarComGrid(pnlCampos, new JLabel("Nascimento:"), 4, 1, 1, false);
+        txtNascimento = new JTextField(10); adicionarComGrid(pnlCampos, txtNascimento, 5, 1, 1, true);
 
-        painelEndereco.add(new JLabel("Número da Residência:"));
-        JTextField txtNumeroResidencia = new JTextField();
-        painelEndereco.add(txtNumeroResidencia);
+        adicionarComGrid(pnlCampos, new JLabel("Cidade:"), 0, 2, 1, false);
+        txtCidade = new JTextField(); adicionarComGrid(pnlCampos, txtCidade, 1, 2, 3, true);
+        adicionarComGrid(pnlCampos, new JLabel("Telefone Res.:"), 4, 2, 1, false);
+        txtTelefoneResidencial = new JTextField(10); adicionarComGrid(pnlCampos, txtTelefoneResidencial, 5, 2, 1, true);
 
-        painelEndereco.add(new JLabel("Bairro:"));
-        JTextField txtBairro = new JTextField();
-        painelEndereco.add(txtBairro);
+        adicionarComGrid(pnlCampos, new JLabel("UF:"), 0, 3, 1, false);
+        txtUF = new JTextField(3); adicionarComGrid(pnlCampos, txtUF, 1, 3, 1, true);
+        adicionarComGrid(pnlCampos, new JLabel("CEP:"), 2, 3, 1, false);
+        txtCEP = new JTextField(8); adicionarComGrid(pnlCampos, txtCEP, 3, 3, 1, true);
+        adicionarComGrid(pnlCampos, new JLabel("Telefone Com.:"), 4, 3, 1, false);
+        txtTelefoneComercial = new JTextField(10); adicionarComGrid(pnlCampos, txtTelefoneComercial, 5, 3, 1, true);
 
-        painelEndereco.add(new JLabel("CEP:"));
-        JTextField txtCep = new JTextField();
-        painelEndereco.add(txtCep);
+        adicionarComGrid(pnlCampos, new JLabel("Naturalidade:"), 0, 4, 1, false);
+        txtNaturalidade = new JTextField(); adicionarComGrid(pnlCampos, txtNaturalidade, 1, 4, 3, true);
+        adicionarComGrid(pnlCampos, new JLabel("Telefone Cel.:"), 4, 4, 1, false);
+        txtCelular = new JTextField(10); adicionarComGrid(pnlCampos, txtCelular, 5, 4, 1, true);
 
-        painelEndereco.add(new JLabel("Ponto de Referência:"));
-        JTextField txtPontoReferencia = new JTextField();
-        painelEndereco.add(txtPontoReferencia);
+        // Foto na direita
+        JPanel pnlFoto = new JPanel(new BorderLayout());
+        pnlFoto.setBorder(new TitledBorder("Foto do Aluno"));
+        pnlFoto.setPreferredSize(new Dimension(180, 180));
+        pnlFoto.add(new JLabel("<html><center>[Clique para inserir<br>a foto]</center></html>", SwingConstants.CENTER), BorderLayout.CENTER);
 
-        painelEndereco.add(new JLabel("Cidade:"));
-        JTextField txtCidade = new JTextField("Recife"); // Padrão otimizado
-        painelEndereco.add(txtCidade);
+        painel.add(pnlCampos, BorderLayout.CENTER);
+        painel.add(pnlFoto, BorderLayout.EAST);
+        return painel;
+    }
 
-        painelEndereco.add(new JLabel("UF:"));
-        JTextField txtUf = new JTextField("PE"); // Padrão otimizado
-        painelEndereco.add(txtUf);
+    // ABA 2: DADOS DOS RESPONSÁVEIS COM O MÉTODO AUXILIAR
+    private JPanel criarAbaResponsavel() {
+        JPanel painel = new JPanel(new GridBagLayout());
+        painel.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        painelDeAbas.addTab("Endereço", new JScrollPane(painelEndereco));
+        adicionarComGrid(painel, new JLabel("Nome da Mãe:"), 0, 0, 1, false);
+        txtNomeMae = new JTextField(); adicionarComGrid(painel, txtNomeMae, 1, 0, 3, true);
+        adicionarComGrid(painel, new JLabel("CPF da Mãe:"), 4, 0, 1, false);
+        txtCpfMae = new JTextField(15); adicionarComGrid(painel, txtCpfMae, 5, 0, 1, true);
 
-        // ==========================================
-        // ABA 3: RESPONSÁVEIS
-        // ==========================================
-        JPanel painelResponsaveis = new JPanel(new GridLayout(0, 2, 10, 15));
-        painelResponsaveis.setBorder(new EmptyBorder(20, 20, 20, 20));
+        adicionarComGrid(painel, new JLabel("Profissão:"), 0, 1, 1, false);
+        txtProfissaoMae = new JTextField(15); adicionarComGrid(painel, txtProfissaoMae, 1, 1, 1, true);
+        adicionarComGrid(painel, new JLabel("Telefone:"), 2, 1, 1, false);
+        txtTelefoneMae = new JTextField(15); adicionarComGrid(painel, txtTelefoneMae, 3, 1, 1, true);
+        adicionarComGrid(painel, new JLabel("E-mail:"), 4, 1, 1, false);
+        txtEmailMae = new JTextField(15); adicionarComGrid(painel, txtEmailMae, 5, 1, 1, true);
 
-        painelResponsaveis.add(new JLabel("Nome da Mãe:"));
-        JTextField txtNomeMae = new JTextField();
-        painelResponsaveis.add(txtNomeMae);
+        adicionarComGrid(painel, new JSeparator(), 0, 2, 6, true);
 
-        painelResponsaveis.add(new JLabel("Nome do Pai:"));
-        JTextField txtNomePai = new JTextField();
-        painelResponsaveis.add(txtNomePai);
+        adicionarComGrid(painel, new JLabel("Nome do Pai:"), 0, 3, 1, false);
+        txtNomePai = new JTextField(); adicionarComGrid(painel, txtNomePai, 1, 3, 3, true);
+        adicionarComGrid(painel, new JLabel("CPF do Pai:"), 4, 3, 1, false);
+        txtCpfPai = new JTextField(15); adicionarComGrid(painel, txtCpfPai, 5, 3, 1, true);
 
-        painelResponsaveis.add(new JLabel("CPF da Mãe:"));
-        JTextField txtCpfMae = new JTextField();
-        painelResponsaveis.add(txtCpfMae);
+        adicionarComGrid(painel, new JLabel("Profissão:"), 0, 4, 1, false);
+        txtProfissaoPai = new JTextField(15); adicionarComGrid(painel, txtProfissaoPai, 1, 4, 1, true);
+        adicionarComGrid(painel, new JLabel("Telefone:"), 2, 4, 1, false);
+        txtTelefonePai = new JTextField(15); adicionarComGrid(painel, txtTelefonePai, 3, 4, 1, true);
+        adicionarComGrid(painel, new JLabel("E-mail:"), 4, 4, 1, false);
+        txtEmailPai = new JTextField(15); adicionarComGrid(painel, txtEmailPai, 5, 4, 1, true);
 
-        painelResponsaveis.add(new JLabel("CPF do Pai:"));
-        JTextField txtCpfPai = new JTextField();
-        painelResponsaveis.add(txtCpfPai);
+        return painel;
+    }
 
-        painelResponsaveis.add(new JLabel("Telefone da Mãe:"));
-        JTextField txtTelefoneMae = new JTextField();
-        painelResponsaveis.add(txtTelefoneMae);
+    private JPanel criarAbaCursos() {
+        JPanel painel = new JPanel(new BorderLayout());
+        painel.add(new JLabel("Cursos contratados", SwingConstants.CENTER), BorderLayout.CENTER);
+        return painel;
+    }
 
-        painelResponsaveis.add(new JLabel("Telefone do Pai:"));
-        JTextField txtTelefonePai = new JTextField();
-        painelResponsaveis.add(txtTelefonePai);
+    private JPanel criarAbaOutrasInformacoes() {
+        JPanel painel = new JPanel(new BorderLayout());
+        painel.add(new JLabel("Outras informações", SwingConstants.CENTER), BorderLayout.CENTER);
+        return painel;
+    }
 
-        painelResponsaveis.add(new JLabel("Responsável Financeiro:"));
-        JTextField txtRespFinanceiro = new JTextField();
-        painelResponsaveis.add(txtRespFinanceiro);
+    //=========================================
+    // 3. PAINEL INFERIOR (Tabelas e Botões)
+    //=========================================
+    private JPanel criarPainelInferior() {
+        JPanel painel = new JPanel(new BorderLayout(5, 5));
 
-        painelResponsaveis.add(new JLabel("Email da Mãe:"));
-        JTextField txtEmailMae = new JTextField();
-        painelResponsaveis.add(txtEmailMae);
+        // TABELAS (Meio da tela)
+        JPanel pnlTabelas = new JPanel(new GridLayout(1, 2, 10, 0));
+        
+        JPanel pnlHorarios = new JPanel(new BorderLayout());
+        pnlHorarios.setBorder(new TitledBorder("Horários Escolhidos"));
+        tabelaHorarios = new JTable(new Object[][]{}, new String[]{"Matrícula", "Dia da Semana", "Hora"});
+        pnlHorarios.add(new JScrollPane(tabelaHorarios), BorderLayout.CENTER);
+        
+        JPanel pnlMensalidade = new JPanel(new BorderLayout());
+        pnlMensalidade.setBorder(new TitledBorder("Controle de Mensalidade"));
+        tabelaMensalidades = new JTable(new Object[][]{}, new String[]{"Horários", "Alunos", "Seg", "Ter", "Qua", "Qui", "Sex"});
+        pnlMensalidade.add(new JScrollPane(tabelaMensalidades), BorderLayout.CENTER);
 
-        painelResponsaveis.add(new JLabel("Email do Pai:"));
-        JTextField txtEmailPai = new JTextField();
-        painelResponsaveis.add(txtEmailPai);
+        pnlTabelas.add(pnlHorarios);
+        pnlTabelas.add(pnlMensalidade);
+        pnlTabelas.setPreferredSize(new Dimension(100, 160));
 
-        painelResponsaveis.add(new JLabel("Profissão da Mãe:"));
-        JTextField txtProfissaoMae = new JTextField();
-        painelResponsaveis.add(txtProfissaoMae);
+        // RODAPÉ (Barra de Ferramentas)
+        JPanel pnlRodape = new JPanel(new BorderLayout());
+        pnlRodape.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
 
-        painelResponsaveis.add(new JLabel("Profissão do Pai:"));
-        JTextField txtProfissaoPai = new JTextField();
-        painelResponsaveis.add(txtProfissaoPai);
+        // Botões de Ação
+        JPanel pnlAcoes = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        btnNovo = new JButton("Novo");
+        btnExcluir = new JButton("Excluir");
+        btnSalvar = new JButton("Salvar");
+        btnIrPara = new JButton("Ir Para");
+        btnMensalidade = new JButton("Mensalidade");
+        btnFrequencia = new JButton("Frequência");
+        btnHistorico = new JButton("Histórico");
 
-        painelResponsaveis.add(new JLabel("Grau de Parentesco:"));
-        JTextField txtGrauParentesco = new JTextField();
-        painelResponsaveis.add(txtGrauParentesco);
+        pnlAcoes.add(btnNovo);
+        pnlAcoes.add(btnExcluir);
+        pnlAcoes.add(btnSalvar);
+        pnlAcoes.add(btnIrPara);
+        pnlAcoes.add(btnMensalidade);
+        pnlAcoes.add(btnFrequencia);
+        pnlAcoes.add(btnHistorico);
 
-        painelResponsaveis.add(new JLabel("Estado Civil:"));
-        JTextField txtEstadoCivil = new JTextField();
-        painelResponsaveis.add(txtEstadoCivil);
+        // Botões de Navegação
+        JPanel pnlNavegacao = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 10));
+        btnPrimeiro = new JButton("|<");
+        btnAnterior = new JButton("<");
+        btnProximo = new JButton(">");
+        btnUltimo = new JButton(">|");
 
-        painelResponsaveis.add(new JLabel("Data Nasc. Mãe (DD/MM/AAAA):"));
-        JTextField txtDataNascMae = new JTextField();
-        painelResponsaveis.add(txtDataNascMae);
+        pnlNavegacao.add(btnPrimeiro);
+        pnlNavegacao.add(btnAnterior);
+        pnlNavegacao.add(btnProximo);
+        pnlNavegacao.add(btnUltimo);
 
-        painelResponsaveis.add(new JLabel("Data Nasc. Pai (DD/MM/AAAA):"));
-        JTextField txtDataNascPai = new JTextField();
-        painelResponsaveis.add(txtDataNascPai);
+        pnlRodape.add(pnlAcoes, BorderLayout.WEST);
+        pnlRodape.add(pnlNavegacao, BorderLayout.EAST);
 
-        JScrollPane scrollResponsaveis = new JScrollPane(painelResponsaveis);
-        scrollResponsaveis.getVerticalScrollBar().setUnitIncrement(16);
-        painelDeAbas.addTab("Responsáveis", scrollResponsaveis);
+        painel.add(pnlTabelas, BorderLayout.CENTER);
+        painel.add(pnlRodape, BorderLayout.SOUTH);
 
-        // ==========================================
-        // BOTÃO DE SALVAR E AÇÃO
-        // ==========================================
-        JPanel painelBotao = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        painelBotao.setBorder(new EmptyBorder(0, 10, 10, 20));
+        return painel;
+    }
 
-        JButton btnSalvar = new JButton("Salvar Matrícula");
-        btnSalvar.setPreferredSize(new Dimension(160, 40));
-        btnSalvar.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        btnSalvar.setBackground(new Color(34, 139, 34));
-        btnSalvar.setForeground(Color.WHITE);
-        painelBotao.add(btnSalvar);
-
-        // Referência final para uso dentro do Lambda
-        final JFormattedTextField dataNascRef = txtDataNascAluno;
-
-        btnSalvar.addActionListener(e -> {
-            try {
-                DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-                // Valida idade vazia
-                int idade = txtIdade.getText().isEmpty() ? 0 : Integer.parseInt(txtIdade.getText());
-                
-                // Pega a data da máscara e remove os espaços vazios
-                String dataDigitada = dataNascRef.getText().replace("_", "").trim();
-                LocalDate dataNascimento = dataDigitada.length() == 10 ? LocalDate.parse(dataDigitada, formatador) : LocalDate.now();
-
-                // 1. Instancia o Aluno (Pegando a série do JComboBox!)
-                Aluno aluno = new Aluno(
-                        txtNomeAluno.getText(),
-                        idade,
-                        txtCpfAluno.getText(),
-                        txtMatricula.getText(),
-                        dataNascimento,
-                        comboSerie.getSelectedItem().toString(), 
-                        txtTurma.getText()
-                );
-
-                // 2. Instancia o Endereço
-                Endereco endereco = new Endereco(
-                        txtCidade.getText(), txtRua.getText(), txtBairro.getText(),
-                        txtCep.getText(), txtLogradouro.getText(), txtNumeroResidencia.getText(),
-                        txtPontoReferencia.getText(), txtUf.getText()
-                );
-                aluno.setEndereco(endereco);
-
-                // 3. Instancia os Responsáveis
-                Responsaveis responsaveis = new Responsaveis();
-                responsaveis.setNomeMae(txtNomeMae.getText());
-                responsaveis.setNomePai(txtNomePai.getText());
-                responsaveis.setCpfMae(txtCpfMae.getText());
-                responsaveis.setCpfPai(txtCpfPai.getText());
-                responsaveis.setTelefoneMae(txtTelefoneMae.getText());
-                responsaveis.setTelefonePai(txtTelefonePai.getText());
-                responsaveis.setResponsavelFinaceiro(txtRespFinanceiro.getText());
-                responsaveis.setEmailMae(txtEmailMae.getText());
-                responsaveis.setEmailPai(txtEmailPai.getText());
-                responsaveis.setProfissaoMae(txtProfissaoMae.getText());
-                responsaveis.setProfissaoPai(txtProfissaoPai.getText());
-                responsaveis.setGrauParentesco(txtGrauParentesco.getText());
-                responsaveis.setEstadoCivil(txtEstadoCivil.getText());
-
-                if (!txtDataNascMae.getText().isEmpty()) {
-                    responsaveis.setDataNascimentoMae(LocalDate.parse(txtDataNascMae.getText(), formatador));
-                }
-                if (!txtDataNascPai.getText().isEmpty()) {
-                    responsaveis.setDataNascimentoPai(LocalDate.parse(txtDataNascPai.getText(), formatador));
-                }
-
-                aluno.setResponsaveis(responsaveis);
-
-                // 4. Salva no Controller
-                controller.cadastrarAluno(aluno);
-
-                JOptionPane.showMessageDialog(frame, "Matrícula de " + aluno.getNome() + " salva com sucesso!\nSérie: " + aluno.getSerie(), "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frame, "Erro ao salvar!\nVerifique se as datas e a idade estão corretas.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
-                ex.printStackTrace();
-            }
+    //=========================================
+    // MAIN
+    //=========================================
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new MainUI();
         });
-
-        frame.add(painelDeAbas, BorderLayout.CENTER);
-        frame.add(painelBotao, BorderLayout.SOUTH);
-        frame.setVisible(true);
     }
 }

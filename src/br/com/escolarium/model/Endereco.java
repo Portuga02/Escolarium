@@ -1,7 +1,7 @@
 package br.com.escolarium.model;
 
 public class Endereco {
-	
+
 	private String cidade;
 	private String rua;
 	private String bairro;
@@ -22,6 +22,7 @@ public class Endereco {
 		this.pontoReferencia = pontoReferencia;
 		this.uf = uf;
 	}
+
 	public String getCidade() {
 		return cidade;
 	}
@@ -33,27 +34,35 @@ public class Endereco {
 	public void setCidade(String cidade) {
 		this.cidade = cidade;
 	}
+
 	public void setRua(String rua) {
 		this.rua = rua;
 	}
+
 	public void setBairro(String bairro) {
 		this.bairro = bairro;
 	}
+
 	public void setCep(String cep) {
 		this.cep = cep;
 	}
+
 	public void setLogradouro(String logradouro) {
 		this.logradouro = logradouro;
 	}
+
 	public void setNumeroResidencia(String numeroResidencia) {
 		this.numeroResidencia = numeroResidencia;
 	}
+
 	public void setPontoReferencia(String pontoReferencia) {
 		this.pontoReferencia = pontoReferencia;
 	}
+
 	public void setUf(String uf) {
 		this.uf = uf;
 	}
+
 	public String getBairro() {
 		return bairro;
 	}
@@ -77,5 +86,5 @@ public class Endereco {
 	public String getUf() {
 		return uf;
 	}
-	
+
 }
