@@ -4,18 +4,9 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
-/**
- * Tela de Login - visual inspirado no estilo "Windows Vista/7 Welcome Screen":
- * fundo com gradiente, avatar circular grande, cartao central arredondado.
- *
- * O avatar muda automaticamente conforme o sexo selecionado (Masculino/Feminino),
- * usando icones desenhados por codigo (AvatarFactory) - sem depender de nenhuma
- * imagem externa.
- *
- * MOCK: aceita qualquer usuario/senha preenchidos.
- * TODO: validar contra tabela de usuarios no banco (ver TelaUsuarios.java).
- */
+
 public class TelaLogin extends JFrame {
 
     private JTextField txtUsuario;
